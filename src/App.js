@@ -1,16 +1,22 @@
-import "./styles.css";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import HomePage from "./HomePage";
 import ConnectPairsCaptcha from "./ConnectPairsCaptcha";
 import BirdGame from "./BirdGame";
 
-export default function App() {
+import "./styles.css";
+
+function App() {
   return (
-    <div className="App">
-      <h1>Captchas</h1>
-      <h2>One</h2>
-      <ConnectPairsCaptcha />
-      <hr />
-      <h2>Two</h2>
-      <BirdGame />
-    </div>
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<HomePage />} />
+        <Route path="/connect-pairs" element={<ConnectPairsCaptcha />} />
+        <Route path="/catch-dots" element={<BirdGame />} />
+        {/* Add more routes for other captcha components */}
+      </Routes>
+    </Router>
   );
 }
+
+export default App;

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./ConnectPairsCaptcha.css";
 
 // Placeholder images for adult animals
@@ -245,6 +246,9 @@ const ConnectPairsCaptcha = () => {
 
   return (
     <div>
+      <nav>
+        <Link to="/">Homepage</Link>
+      </nav>
       {!isCaptchaSolved && (
         <>
           <h2>Connect the pairs</h2>
