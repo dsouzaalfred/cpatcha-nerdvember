@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Container from "./components/Container";
 import TopMenu from "./components/TopMenu";
-import "./ConnectPairsCaptcha.css";
 
 // Placeholder images for adult animals
 import cat from "./images/cat.jpeg";
@@ -119,8 +118,6 @@ const backgroundImages = [bg1, bg2, bg3];
 const selectedBackground =
   backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
 
-const canvasWidth = 600;
-const canvasHeight = 400;
 const animalSize = 50;
 const minGap = 10;
 
@@ -164,6 +161,18 @@ const ConnectPairsCaptcha = () => {
   const [selectedAnimals, setSelectedAnimals] = useState([]);
   const [connections, setConnections] = useState([]);
   const [isCaptchaSolved, setIsCaptchaSolved] = useState(false);
+  const [canvasWidth, setCanvasWidth] = useState(window.innerWidth * 0.8);
+  const [canvasHeight, setCanvasHeight] = useState(window.innerHeight * 0.6);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCanvasWidth(window.innerWidth * 0.8);
+      setCanvasHeight(window.innerHeight * 0.6);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const pairs = generateAnimalPairs();
@@ -179,7 +188,7 @@ const ConnectPairsCaptcha = () => {
     });
 
     setAnimalPositions(positions);
-  }, []);
+  }, [canvasWidth, canvasHeight, animalSize]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -219,7 +228,7 @@ const ConnectPairsCaptcha = () => {
         }
       });
     };
-  }, [animalPositions, connections, selectedBackground]);
+  }, [animalPositions, connections, selectedBackground, canvasWidth]);
 
   const handleAnimalClick = (id) => {
     if (selectedAnimals.length === 0) {
@@ -248,33 +257,39 @@ const ConnectPairsCaptcha = () => {
   return (
     <Container>
       <TopMenu />
-      {!isCaptchaSolved && (
-        <>
-          <h2>Connect the pairs</h2>
-          <canvas
-            ref={canvasRef}
-            width={canvasWidth}
-            height={canvasHeight}
-            onClick={(e) => {
-              const rect = canvasRef.current.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              const clickedAnimal = animalPositions.find(
-                (animal) =>
-                  x >= animal.x &&
-                  x <= animal.x + animalSize &&
-                  y >= animal.y &&
-                  y <= animal.y + animalSize
-              );
-              if (clickedAnimal) {
-                handleAnimalClick(clickedAnimal.id);
-              }
-            }}
-          />
-          <div>Unique Connections made: {connections.length} / 5</div>
-        </>
-      )}
-      {isCaptchaSolved && <div>CAPTCHA Solved!</div>}
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <h1 className="text-2xl font-bold mb-4">Connect Pairs Captcha</h1>
+        {!isCaptchaSolved && (
+          <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+            <canvas
+              ref={canvasRef}
+              width={canvasWidth}
+              height={canvasHeight}
+              onClick={(e) => {
+                const rect = canvasRef.current.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const clickedAnimal = animalPositions.find(
+                  (animal) =>
+                    x >= animal.x &&
+                    x <= animal.x + animalSize &&
+                    y >= animal.y &&
+                    y <= animal.y + animalSize
+                );
+                if (clickedAnimal) {
+                  handleAnimalClick(clickedAnimal.id);
+                }
+              }}
+            />
+            <div>Unique Connections made: {connections.length} / 5</div>
+          </div>
+        )}
+        {isCaptchaSolved && (
+          <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+            CAPTCHA Solved!
+          </div>
+        )}
+      </div>
     </Container>
   );
 };
