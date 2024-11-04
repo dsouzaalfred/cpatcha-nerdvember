@@ -1,22 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import Container from "./components/Container";
+import TopMenu from "./components/TopMenu";
 
 const HomePage = () => {
   return (
-    <div>
+    <Container>
+      <TopMenu />
       <h1>Home Page</h1>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/connect-pairs">Connect pairs</Link>
-          </li>
-          <li>
-            <Link to="/catch-dots">Catch dots</Link>
-          </li>
-          {/* Add more links for other captcha components */}
-        </ul>
-      </nav>
-    </div>
+      <p>Welcome to the home page</p>
+      <p>Click on the links above to play the games</p>
+    </Container>
   );
 };
 

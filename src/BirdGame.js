@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Container from "./components/Container";
+import TopMenu from "./components/TopMenu";
 
 const BirdGame = () => {
   const canvasRef = useRef(null);
@@ -120,10 +122,8 @@ const BirdGame = () => {
   };
 
   return (
-    <div>
-      <nav>
-        <Link to="/">Homepage</Link>
-      </nav>
+    <Container>
+      <TopMenu />
       {isRobot && (
         <>
           <h2>Click all the {targetColor} birds!</h2>
@@ -138,7 +138,7 @@ const BirdGame = () => {
         </>
       )}
       {!isRobot && <h2>You are not a robot!</h2>}
-    </div>
+    </Container>
   );
 };
 
