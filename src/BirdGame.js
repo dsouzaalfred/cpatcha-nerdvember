@@ -119,8 +119,6 @@ const BirdGame = () => {
       return bird;
     });
 
-    setBirds([...birdsRef.current]);
-
     if (
       birdsRef.current
         .filter((bird) => bird.color === targetColor)
