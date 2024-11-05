@@ -1,10 +1,15 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Container from "./components/Container";
 import TopMenu from "./components/TopMenu";
 
 const BirdGame = () => {
   const canvasRef = useRef(null);
+  const [targetColor, setTargetColor] = useState("");
+  const [remainingCount, setRemainingCount] = useState(0);
+  const [isRobot, setIsRobot] = useState(true);
+  const containerRef = useRef(null);
+  const [canvasWidth, setCanvasWidth] = useState(window.innerWidth * 0.8);
+  const [canvasHeight, setCanvasHeight] = useState(window.innerHeight * 0.6);
 
   const generateRandomBirds = () => {
     const colors = ["red", "blue", "green", "yellow", "purple", "orange"];
@@ -12,10 +17,10 @@ const BirdGame = () => {
     let id = 0;
 
     colors.forEach((color) => {
-      const numBirds = Math.floor(Math.random() * 2) + 3; // Random number between 3 and 4
+      const numBirds = Math.floor(Math.random() * 2) + 4; // Ensure at least 4 birds of each color
       for (let i = 0; i < numBirds; i++) {
-        const x = Math.random() * 800;
-        const y = Math.random() * 600;
+        const x = Math.random() * canvasWidth;
+        const y = Math.random() * canvasHeight;
         const vx = (Math.random() * 2 - 1) * 2; // Slower velocity
         const vy = (Math.random() * 2 - 1) * 2; // Slower velocity
         birds.push({ id: id++, color, x, y, vx, vy, clicked: false });
@@ -26,12 +31,13 @@ const BirdGame = () => {
   };
 
   const birdsRef = useRef(generateRandomBirds()); // Generate birds with the new rule
-  const [birds, setBirds] = useState(birdsRef.current);
-  const [targetColor, setTargetColor] = useState("");
-  const [remainingCount, setRemainingCount] = useState(0);
-  const [isRobot, setIsRobot] = useState(true);
 
   useEffect(() => {
+    const containerWidth = containerRef?.current?.clientWidth;
+    const top = containerRef?.current?.getBoundingClientRect().top * 4;
+    setCanvasWidth(containerWidth);
+    setCanvasHeight(window.innerHeight - top);
+
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     let animationFrameId;
@@ -82,11 +88,14 @@ const BirdGame = () => {
     const selectedColor =
       uniqueColors[Math.floor(Math.random() * uniqueColors.length)];
     setTargetColor(selectedColor);
+    console.log({ selectedColor });
 
     // Set the initial remaining count
+    console.log(birdsRef.current);
     const initialCount = birdsRef.current.filter(
       (bird) => bird.color === selectedColor
     ).length;
+    console.log({ initialCount });
     setRemainingCount(initialCount);
 
     return () => {
@@ -124,20 +133,29 @@ const BirdGame = () => {
   return (
     <Container>
       <TopMenu />
-      {isRobot && (
-        <>
-          <h2>Click all the {targetColor} birds!</h2>
-          <p>Birds left to click: {remainingCount}</p>
-          <canvas
-            ref={canvasRef}
-            width={800}
-            height={600}
-            onClick={handleCanvasClick}
-            style={{ border: "1px solid black" }}
-          />
-        </>
-      )}
-      {!isRobot && <h2>You are not a robot!</h2>}
+      <div
+        ref={containerRef}
+        className="flex flex-col items-center min-h-screen bg-gray-100 max-w-screen-lg"
+      >
+        <h1 className="text-2xl font-bold mb-4">Catch the dots</h1>
+        {isRobot && (
+          <>
+            <h2 className="text-xl font-bold mb-2">
+              Click all the{" "}
+              <span style={{ color: targetColor }}>{targetColor}</span> birds!
+            </h2>
+            <p>Birds left to click: {remainingCount}</p>
+            <canvas
+              ref={canvasRef}
+              width={canvasWidth}
+              height={canvasHeight}
+              onClick={handleCanvasClick}
+              style={{ border: "1px solid black" }}
+            />
+          </>
+        )}
+        {!isRobot && <h2>You are not a robot!</h2>}
+      </div>
     </Container>
   );
 };
