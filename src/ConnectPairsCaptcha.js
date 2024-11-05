@@ -163,15 +163,17 @@ const ConnectPairsCaptcha = () => {
   const [isCaptchaSolved, setIsCaptchaSolved] = useState(false);
   const [canvasWidth, setCanvasWidth] = useState(window.innerWidth * 0.8);
   const [canvasHeight, setCanvasHeight] = useState(window.innerHeight * 0.6);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
-      setCanvasWidth(window.innerWidth * 0.8);
-      setCanvasHeight(window.innerHeight * 0.6);
+      const containerWidth = containerRef?.current?.clientWidth;
+      const top = containerRef?.current?.getBoundingClientRect().top * 3;
+      setCanvasWidth(containerWidth);
+      setCanvasHeight(window.innerHeight - top);
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    handleResize();
   }, []);
 
   useEffect(() => {
@@ -257,10 +259,13 @@ const ConnectPairsCaptcha = () => {
   return (
     <Container>
       <TopMenu />
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div
+        ref={containerRef}
+        className="flex flex-col items-center min-h-screen bg-gray-100 max-w-screen-lg"
+      >
         <h1 className="text-2xl font-bold mb-4">Connect Pairs Captcha</h1>
         {!isCaptchaSolved && (
-          <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+          <div className="w-full  bg-white rounded-lg shadow-md">
             <canvas
               ref={canvasRef}
               width={canvasWidth}
